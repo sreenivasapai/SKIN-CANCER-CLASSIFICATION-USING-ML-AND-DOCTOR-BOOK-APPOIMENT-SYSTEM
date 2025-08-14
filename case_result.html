@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Case Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            background-color: #f9fafb;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1e3a8a;
+        }
+        img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .info {
+            margin-top: 20px;
+        }
+        .label {
+            font-weight: bold;
+        }
+        .back-button {
+            margin-top: 30px;
+            display: inline-block;
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background: #2563eb;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Prediction Result</h1>
+
+        <div>
+            <p><span class="label">Prediction:</span> {{ prediction_label }}</p>
+
+            {% if prediction_label != 'Invalid' %}
+                <p><span class="label">Confidence:</span> {{ confidence }}%</p>
+                <p><span class="label">Risk Level:</span> {{ risk_level }}</p>
+            {% endif %}
+        </div>
+
+        {% if prediction_label == 'Invalid' %}
+            <div class="error">
+                <p>{{ explanation }}</p>
+            </div>
+        {% else %}
+            <div class="info">
+                <h3>Uploaded Image</h3>
+                <img src="{{ image_path }}" alt="Uploaded Image" style="max-width: 300px; border: 2px solid #ccc; border-radius: 8px; padding: 5px;">
+            </div>
+
+            <div class="info">
+                <h3>Prediction Confidence Graph</h3>
+                <img src="{{ graph_path }}" alt="Prediction Graph" style="max-width: 400px; border: 2px solid #ccc; border-radius: 8px; padding: 5px;">
+            </div>
+
+            <div class="info">
+                <h3>Risk Analysis</h3>
+                <p><span class="label">Explanation:</span> {{ explanation }}</p>
+
+                {% if precautions %}
+                <h4>Precautions:</h4>
+                <ul>
+                    {% for item in precautions %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>No precautions available.</p>
+                {% endif %}
+
+                
+
+            </div>
+        {% endif %}
+
+        <a href="/doctor_dashboard" class="back-button">← Back to Dashboard</a>
+    </div>
+</body>
+</html>

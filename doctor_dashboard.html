@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard - MedConnect</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            color: #334155;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #475569;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 10px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: #cbd5e1;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            fill: currentColor;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .welcome {
+            color: #1e293b;
+        }
+
+        .welcome h2 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .welcome p {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid;
+            transition: transform 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .kpi-card.pending { border-left-color: #f59e0b; }
+        .kpi-card.patients { border-left-color: #3b82f6; }
+        .kpi-card.malignant { border-left-color: #ef4444; }
+        .kpi-card.benign { border-left-color: #10b981; }
+
+        .kpi-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .kpi-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .kpi-card.pending .kpi-icon { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .kpi-card.patients .kpi-icon { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        .kpi-card.malignant .kpi-icon { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        .kpi-card.benign .kpi-icon { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+        .kpi-content h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .kpi-content p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Content Sections */
+        .content-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #475569;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-benign {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-malignant {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        /* Image Upload Section */
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            background: #f8fafc;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #3b82f6;
+            background: #dbeafe;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            fill: #6b7280;
+        }
+
+        .prediction-result {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .prediction-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .prediction-icon {
+            width: 40px;
+            height: 40px;
+            background: #3b82f6;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #3b82f6);
+            transition: width 0.3s ease;
+        }
+
+        /* Calendar */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        .calendar-day:hover {
+            background: #e0f2fe;
+        }
+
+        .calendar-day.has-appointment {
+            background: #dbeafe;
+            border-color: #3b82f6;
+            font-weight: 600;
+        }
+
+        /* Search */
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .kpi-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .image-preview {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 8px;
+            margin: 15px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .override-section {
+            background: #fef7ff;
+            border: 1px solid #e879f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .patient-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .patient-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .patient-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #1e293b;
+        }
+
+        .case-history {
+            margin-top: 15px;
+        }
+
+        .history-item {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #3b82f6;
+        }
+
+         .status-badge.status-viewed {
+          background-color: #d4edda;
+           color: #155724;
+           padding: 5px 10px;
+           border-radius: 12px;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const navLinks = document.querySelectorAll(".nav-link");
+    const sections = document.querySelectorAll(".content-section");
+
+    navLinks.forEach(link => {
+        link.addEventListener("click", function () {
+            const sectionId = this.getAttribute("data-section");
+
+            // Remove 'active' class from all nav links
+            navLinks.forEach(l => l.classList.remove("active"));
+            // Add 'active' class to clicked link
+            this.classList.add("active");
+
+            // Hide all content sections
+            sections.forEach(section => section.classList.remove("active"));
+
+            // Show the selected section
+            const activeSection = document.getElementById(sectionId);
+            if (activeSection) {
+                activeSection.classList.add("active");
+            }
+        });
+    });
+
+    // Optionally activate 'overview' by default on load
+    document.querySelector(".nav-link[data-section='overview']")?.click();
+});
+</script>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                </div>
+                <h1>Cancer Detection</h1>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+<a class="nav-link active" href="{{ url_for('doctor_dashboard') }}">
+                            <svg class="nav-icon" viewBox="0 0 24 24">
+                                <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                            </svg>
+                            Overview
+                        </a>
+                    </li>
+                    <li class="nav-item">
+  <a class="nav-link" href="{{ url_for('pending_appointments') }}">
+    <svg class="nav-icon" viewBox="0 0 24 24">
+      <path d="..." />
+    </svg>
+    Pending Appointments
+  </a>
+</li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" data-section="diagnosis">
+                            <svg class="nav-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Manual Diagnosis
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-section="calendar">
+                            <svg class="nav-icon" viewBox="0 0 24 24">
+                                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/>
+                            </svg>
+                            Calendar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-section="patients">
+                            <svg class="nav-icon" viewBox="0 0 24 24">
+                                <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zM4 18v-4h3v4h2v-7.5c0-.83.67-1.5 1.5-1.5S12 9.67 12 10.5V11h2.5c.83 0 1.5.67 1.5 1.5v5.5h2V9.5C18 8.12 16.88 7 15.5 7H13c-.8 0-1.52.48-1.83 1.21C10.8 7.64 10.17 7.2 9.5 7.2 8.12 7.2 7 8.32 7 9.7V18H4z"/>
+                            </svg>
+                            Patient History
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-section="reports">
+                            <svg class="nav-icon" viewBox="0 0 24 24">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                            </svg>
+                            Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-section="settings">
+                            <svg class="nav-icon" viewBox="0 0 24 24">
+                                <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                            </svg>
+                            Settings
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+          <div class="header" style="display: flex; justify-content: space-between; align-items: center;">
+  <div class="welcome">
+    <h2>Welcome back, Dr. {{ first_name }} {{ last_name }}</h2>
+    <p>Here's what's happening with your patients today</p>
+  </div>
+  <div class="user-profile">
+    <div class="profile-avatar">{{ first_name[0]|upper }}{{ last_name[0]|upper }}</div>
+    <div>
+      <span style="font-weight: 500;">Dr. {{ first_name }} {{ last_name }}</span>
+    </div>
+  </div>
+</div>
+
+
+
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card pending">
+                    <div class="kpi-header">
+                        <div class="kpi-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                        </div>
+                        <div class="kpi-content">
+        <h3>{{ pending_count }}</h3>
+                            <p>Pending Appointments</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card patients">
+                    <div class="kpi-header">
+                        <div class="kpi-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zM4 18v-4h3v4h2v-7.5c0-.83.67-1.5 1.5-1.5S12 9.67 12 10.5V11h2.5c.83 0 1.5.67 1.5 1.5v5.5h2V9.5C18 8.12 16.88 7 15.5 7H13c-.8 0-1.52.48-1.83 1.21C10.8 7.64 10.17 7.2 9.5 7.2 8.12 7.2 7 8.32 7 9.7V18H4z"/>
+                            </svg>
+                        </div>
+                        <div class="kpi-content">
+        <h3>{{ total_patients }}</h3>
+                            <p>Total Patients</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card malignant">
+                    <div class="kpi-header">
+                        <div class="kpi-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                            </svg>
+                        </div>
+                        <div class="kpi-content">
+        <h3>{{ malignant_count }}</h3>
+                            <p>Malignant Cases</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card benign">
+                    <div class="kpi-header">
+                        <div class="kpi-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                        </div>
+                        <div class="kpi-content">
+        <h3>{{ benign_count }}</h3>
+                            <p>Benign Cases</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+ <!-- Overview Section -->
+      <div class="content-section active" id="overview">
+        <div class="section-header">
+            <div class="content-section" id="appointments">...</div>
+<div class="content-section" id="diagnosis">...</div>
+<div class="content-section" id="calendar">...</div>
+<div class="content-section" id="patients">...</div>
+<div class="content-section" id="reports">...</div>
+<div class="content-section" id="settings">...</div>
+
+         <h2 class="section-title">Dashboard Overview</h2>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+  <div>
+    <h3 style="margin-bottom: 20px; color: #1e293b;">Recent Appointments</h3>
+    <div class="table-container">
+   <table>
+  <thead>
+    <tr>
+      <th>Patient</th>
+      <th>Booked Date</th> <!-- ✅ Renamed -->
+      <th>Appointment Date</th> <!-- ✅ Renamed -->
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for appointment in appointments %}
+    <tr>
+      <td>{{ appointment.patient_name or 'N/A' }}</td>
+
+      <td>{{ appointment.booked_datetime or 'N/A' }}</td>
+
+      <td>
+        {% if appointment.date and appointment.time %}
+          {{ appointment.date }} at {{ appointment.time }}
+        {% else %}
+          N/A
+        {% endif %}
+      </td>
+
+      <!-- Status -->
+      <td>
+        {% if appointment.status == 'Malignant' %}
+        <span class="status-badge status-malignant">Malignant</span>
+        {% elif appointment.status == 'Benign' %}
+        <span class="status-badge status-benign">Benign</span>
+        {% elif appointment.status == 'Viewed' %}
+        <span class="status-badge status-viewed">Viewed</span>
+        {% else %}
+        <span class="status-badge status-pending">{{ appointment.status }}</span>
+        {% endif %}
+      </td>
+
+<!-- Actions -->
+<td>
+  <!-- Always show Download Report -->
+  <a href="{{ url_for('download_report', patient_email=appointment.patient_email) }}" target="_blank" style="margin-bottom: 5px;">
+    <button class="btn btn-info">Download Report</button>
+  </a>
+
+  {% if appointment.status == 'Malignant' %}
+    <!-- Allow Follow-up review if status is Malignant -->
+    <form method="POST" action="{{ url_for('update_status') }}" style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
+      <input type="hidden" name="patient_email" value="{{ appointment.patient_email }}">
+      <select name="status" required>
+        <option value="">-- Follow-up Review --</option>
+        <option value="Benign">Benign</option>
+        <option value="Malignant">Malignant</option>
+      </select>
+      <button type="submit" class="btn btn-primary">Follow-up</button>
+    </form>
+
+  {% elif appointment.status in ['Pending', 'Viewed'] %}
+    <!-- Initial review form for Pending or Viewed -->
+    <form method="POST" action="{{ url_for('update_status') }}" style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
+      <input type="hidden" name="patient_email" value="{{ appointment.patient_email }}">
+      <select name="status" required>
+        <option value="">-- Select Status --</option>
+        <option value="Benign">Benign</option>
+        <option value="Malignant">Malignant</option>
+      </select>
+      <button type="submit" class="btn btn-warning">Update</button>
+    </form>
+
+  {% elif appointment.status == 'Benign' %}
+    <!-- Benign is final – no more updates -->
+    <p style="margin-top: 10px; font-weight: bold; color: green;">Marked as Benign</p>
+  {% endif %}
+</td>
+
+
+
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+
+
+
+                    <div>
+                        <h3 style="margin-bottom: 20px; color: #1e293b;">Quick Actions</h3>
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <form id="uploadForm" action="/upload_case" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 10px;">
+                            <input type="file" name="image" id="fileInput" accept="image/*" style="display: none;" onchange="document.getElementById('uploadForm').submit();">
+
+                            <button type="button" class="btn btn-primary" style="padding: 15px; text-align: left;" onclick="document.getElementById('fileInput').click();">
+                                <svg style="width: 20px; height: 20px; margin-right: 10px; fill: currentColor;" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                                </svg>
+                                Upload New Case
+                            </button>
+                            </form>
+                            <button class="btn btn-secondary" style="padding: 15px; text-align: left;">
+                                <svg style="width: 20px; height: 20px; margin-right: 10px; fill: currentColor;" viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2

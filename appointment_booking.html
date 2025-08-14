@@ -1,0 +1,83 @@
+""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Book Appointment</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    body {
+      background: linear-gradient(to right, #e0f7fa, #ffffff);
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      text-align: center;
+      padding: 20px;
+      color: #00796b;
+    }
+    .doctor-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+    }
+    .doctor-card {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      width: 300px;
+      transition: transform 0.3s;
+      padding: 20px;
+    }
+    .doctor-card:hover {
+      transform: translateY(-5px);
+    }
+    .doctor-card h3 {
+      color: #004d40;
+      margin-top: 0;
+    }
+    .doctor-card p {
+      color: #333;
+      font-size: 15px;
+      margin: 5px 0;
+    }
+    .book-btn {
+      background-color: #00796b;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      margin-top: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    .book-btn:hover {
+      background-color: #004d40;
+    }
+  </style>
+</head>
+<body>
+  <h1>Select a Doctor to Book Appointment</h1>
+  <div class="doctor-container">
+    {% for doctor in doctors %}
+    <div class="doctor-card">
+      <h3>Dr. {{ doctor.first_name }} {{ doctor.last_name }}</h3>
+      <p><strong>Specialization:</strong> {{ doctor.specialization }}</p>
+      <p><strong>Hospital:</strong> {{ doctor.hospital }}</p>
+      <p><strong>Email:</strong> {{ doctor.email }}</p>
+      <p><strong>Phone:</strong> {{ doctor.phone }}</p>
+      <form action="/book_appointment" method="post">
+        <input type="hidden" name="doctor_email" value="{{ doctor.email }}">
+        <button type="submit" class="book-btn">Book Appointment</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+
+  <a href="/download-report/{{ username }}" class="btn btn-primary">Download Diagnosis Report</a>
+
+</body>
+</html>

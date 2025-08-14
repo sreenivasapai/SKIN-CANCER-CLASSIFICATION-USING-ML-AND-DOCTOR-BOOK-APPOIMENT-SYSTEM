@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Verification - Skin Cancer Detection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .form-container {
+            padding: 40px 30px;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e3f2fd;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            fill: #4facfe;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #34495e;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            background: #fafafa;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-upload {
+            border: 2px dashed #cbd5e0;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .file-upload:hover {
+            border-color: #4facfe;
+            background: #f0f9ff;
+        }
+
+        .file-upload.dragover {
+            border-color: #4facfe;
+            background: #e0f2fe;
+            transform: scale(1.02);
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            fill: #64748b;
+        }
+
+        .upload-text {
+            color: #475569;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .file-list {
+            margin-top: 20px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .file-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            fill: #4facfe;
+        }
+
+        .file-name {
+            flex: 1;
+            font-size: 14px;
+            color: #334155;
+        }
+
+        .file-remove {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .file-remove:hover {
+            background: #fee2e2;
+        }
+
+        .verification-note {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+
+        .verification-note h3 {
+            color: #92400e;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .verification-note p {
+            color: #78350f;
+            line-height: 1.6;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 172, 254, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-container {
+                padding: 30px 20px;
+            }
+        }
+
+        .success-message {
+            display: none;
+            background: #dcfce7;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Doctor Verification</h1>
+            <p>Complete your profile verification to start connecting with patients. Our team will review your credentials within 24-48 hours.</p>
+        </div>
+
+        <div class="form-container">
+            <form id="verificationForm">
+                <!-- Personal Information -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        Personal Information
+                    </h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name <span class="required">*</span></label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name <span class="required">*</span></label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email Address <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number <span class="required">*</span></label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Information -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                        Professional Information
+                    </h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="licenseNumber">Medical License Number <span class="required">*</span></label>
+                            <input type="text" id="licenseNumber" name="licenseNumber" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registrationNumber">Registration Number <span class="required">*</span></label>
+                            <input type="text" id="registrationNumber" name="registrationNumber" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="specialization">Specialization <span class="required">*</span></label>
+                            <select id="specialization" name="specialization" required>
+                                <option value="">Select Specialization</option>
+                                <option value="cardiology">Cardiology</option>
+                                <option value="dermatology">Dermatology</option>
+                                <option value="endocrinology">Endocrinology</option>
+                                <option value="gastroenterology">Gastroenterology</option>
+                                <option value="general-practice">General Practice</option>
+                                <option value="neurology">Neurology</option>
+                                <option value="oncology">Oncology</option>
+                                <option value="orthopedics">Orthopedics</option>
+                                <option value="pediatrics">Pediatrics</option>
+                                <option value="psychiatry">Psychiatry</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="experience">Years of Experience <span class="required">*</span></label>
+                            <select id="experience" name="experience" required>
+                                <option value="">Select Experience</option>
+                                <option value="0-2">0-2 years</option>
+                                <option value="3-5">3-5 years</option>
+                                <option value="6-10">6-10 years</option>
+                                <option value="11-15">11-15 years</option>
+                                <option value="16+">16+ years</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hospitalAffiliation">Current Hospital/Clinic Affiliation <span class="required">*</span></label>
+                        <input type="text" id="hospitalAffiliation" name="hospitalAffiliation" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="workAddress">Work Address</label>
+                        <textarea id="workAddress" name="workAddress" placeholder="Enter your primary practice address"></textarea>
+                    </div>
+                </div>
+
+                <!-- Document Upload -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24">
+                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                        </svg>
+                        Required Documents
+                    </h2>
+
+                    <div class="form-group">
+                        <label>Medical License <span class="required">*</span></label>
+                        <div class="file-upload" id="licenseUpload">
+                            <input type="file" id="licenseFile" name="licenseFile" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                            <svg class="upload-icon" viewBox="0 0 24 24">
+                                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                            </svg>
+                            <div class="upload-text">Upload Medical License</div>
+                            <div class="upload-hint">PDF, JPG, or PNG (Max 5MB each)</div>
+                        </div>
+                        <div class="file-list" id="licenseFileList"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Medical Registration Certificate <span class="required">*</span></label>
+                        <div class="file-upload" id="registrationUpload">
+                            <input type="file" id="registrationFile" name="registrationFile" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                            <svg class="upload-icon" viewBox="0 0 24 24">
+                                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                            </svg>
+                            <div class="upload-text">Upload Registration Certificate</div>
+                            <div class="upload-hint">PDF, JPG, or PNG (Max 5MB each)</div>
+                        </div>
+                        <div class="file-list" id="registrationFileList"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hospital/Clinic ID or Employment Letter</label>
+                        <div class="file-upload" id="hospitalUpload">
+                            <input type="file" id="hospitalFile" name="hospitalFile" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                            <svg class="upload-icon" viewBox="0 0 24 24">
+                                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                            </svg>
+                            <div class="upload-text">Upload Hospital ID or Employment Letter</div>
+                            <div class="upload-hint">PDF, JPG, or PNG (Max 5MB each)</div>
+                        </div>
+                        <div class="file-list" id="hospitalFileList"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Additional Certifications (Optional)</label>
+                        <div class="file-upload" id="certificationUpload">
+                            <input type="file" id="certificationFile" name="certificationFile" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                            <svg class="upload-icon" viewBox="0 0 24 24">
+                                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                            </svg>
+                            <div class="upload-text">Upload Additional Certifications</div>
+                            <div class="upload-hint">Board certifications, additional qualifications, etc.</div>
+                        </div>
+                        <div class="file-list" id="certificationFileList"></div>
+                    </div>
+                </div>
+
+                <div class="verification-note">
+                    <h3>Verification Process</h3>
+                    <p>Our verification team will review your submitted documents within 24-48 hours. You will receive an email notification once your account is approved. If additional information is needed, we'll contact you directly.</p>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Submit for Verification
+                </button>
+
+                <div class="success-message" id="successMessage">
+                    <h3>Verification Request Submitted!</h3>
+                    <p>Thank you for submitting your verification documents. Our team will review your application within 24-48 hours and notify you via email once approved.</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // File upload functionality
+        const fileUploads = ['license', 'registration', 'hospital', 'certification'];
+        
+        fileUploads.forEach(type => {
+            const uploadDiv = document.getElementById(`${type}Upload`);
+            const fileInput = document.getElementById(`${type}File`);
+            const fileList = document.getElementById(`${type}FileList`);
+
+            // Drag and drop events
+            uploadDiv.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadDiv.classList.add('dragover');
+            });
+
+            uploadDiv.addEventListener('dragleave', () => {
+                uploadDiv.classList.remove('dragover');
+            });
+
+            uploadDiv.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadDiv.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                handleFiles(files, type);
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files, type);
+            });
+        });
+
+        function handleFiles(files, type) {
+            const fileList = document.getElementById(`${type}FileList`);
+            
+            Array.from(files).forEach(file => {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert(`File ${file.name} is too large. Maximum size is 5MB.`);
+                    return;
+                }
+
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <svg class="file-icon" viewBox="0 0 24 24">
+                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                    </svg>
+                    <span class="file-name">${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+                    <button type="button" class="file-remove" onclick="removeFile(this)">×</button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(button) {
+            button.parentElement.remove();
+        }
+
+        // Form submission
+        document.getElementById('verificationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const successMessage = document.getElementById('successMessage');
+            
+            // Basic validation
+            const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'licenseNumber', 'registrationNumber', 'specialization', 'experience', 'hospitalAffiliation'];
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                const input = document.getElementById(field);
+                if (!input.value.trim()) {
+                    input.style.borderColor = '#ef4444';
+                    isValid = false;
+                } else {
+                    input.style.borderColor = '#e0e6ed';
+                }
+            });
+
+            // Check required files
+            const licenseFiles = document.getElementById('licenseFileList').children.length;
+            const registrationFiles = document.getElementById('registrationFileList').children.length;
+            
+            if (licenseFiles === 0 || registrationFiles === 0) {
+                alert('Please upload both Medical License and Registration Certificate documents.');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                alert('Please fill in all required fields and upload required documents.');
+                return;
+            }
+
+            // Simulate form submission
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            setTimeout(() => {
+                this.style.display = 'none';
+                successMessage.style.display = 'block';
+            }, 2000);
+        });
+
+        // Email validation
+        document.getElementById('email').addEventListener('blur', function() {
+            const email = this.value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (email && !emailRegex.test(email)) {
+                this.style.borderColor = '#ef4444';
+                alert('Please enter a valid email address.');
+            } else {
+                this.style.borderColor = '#e0e6ed';
+            }
+        });
+    </script>
+</body>
+</html>

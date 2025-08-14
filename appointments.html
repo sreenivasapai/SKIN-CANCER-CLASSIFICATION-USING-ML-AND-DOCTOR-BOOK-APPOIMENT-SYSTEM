@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Appointment Booking</title>
+</head>
+<body>
+<main>
+    <h1>Book an Appointment</h1>
+    <!-- Booking form or doctor listing goes here -->
+
+<!-- Appointment Display Section -->
+<section id="myAppointmentsSection" style="margin-top: 40px; display: none;">
+    <h2 style="text-align: center; margin-bottom: 20px;">My Appointments</h2>
+    <table style="width: 100%; border-collapse: collapse; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+        <thead>
+            <tr style="background: #3498db; color: white;">
+                <th style="padding: 12px;">Patient Name</th>
+                <th style="padding: 12px;">Phone Number</th>
+                <th style="padding: 12px;">Time Slot</th>
+                <th style="padding: 12px;">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in appointments %}
+            <tr>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;">{{ appointment.patient_name }}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;">{{ appointment.phone_number }}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;">{{ appointment.time_slot }}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #ddd;">{{ appointment.date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+</main>
+</body>
+</html>
